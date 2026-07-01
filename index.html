@@ -147,6 +147,10 @@
     opacity:0; transform:translateY(-4px); transition:all .18s ease;
   }
   .ruler .pin:hover .nm, .ruler .pin.active .nm{opacity:1; transform:translateY(0); color:var(--ink);}
+  .ruler .pin.small{top:36px; width:50px;}
+  .ruler .pin.small .dot{width:8px; height:8px; border-width:2px; box-shadow:0 0 0 1px var(--line);}
+  .ruler .pin.small .km{font-size:9px;}
+  .ruler .pin.small .nm{font-size:9px; max-width:50px;}
 
   /* ---------- LEGEND ---------- */
   .legend{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px;}
@@ -212,6 +216,15 @@
     opacity:0.6; transition:opacity .2s;
   }
   .lb-close:hover{opacity:1;}
+
+  .card.compact{padding:16px 20px; --accent:var(--sand);}
+  .card.compact::before{opacity:0.4;}
+  .card.compact h3{font-size:16px; margin-bottom:0; display:inline;}
+  .card.compact .short{font-size:13px; color:var(--ink-faint); margin-bottom:0; display:inline;}
+  .card.compact .card-head{margin-bottom:0;}
+  .card.compact .badge.km{font-size:10px; padding:2px 8px;}
+  .card.compact .tabs,.card.compact .stat-row,.card.compact .tab-panel{display:none;}
+  .card.compact .inner{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
 
   .card::before{
     content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
@@ -336,6 +349,9 @@
     .ruler{min-width:700px;}
     .ruler-scroll{padding-bottom:18px; margin:0 -12px; padding-left:12px;}
     .ruler .pin .nm{max-width:60px;}
+    .ruler .pin.small{top:44px;}
+    .ruler .pin.small .dot{width:6px; height:6px;}
+    .ruler .pin.small .km{font-size:7px;}
     .idea{grid-template-columns:1fr;}
     .idea .tag{grid-column:1;}
     .idea .txt{grid-column:1;}
@@ -379,7 +395,7 @@
       <div class="meta-row">
         <div class="meta-chip"><span class="k">Формат</span><span class="v">Автопутешествие</span></div>
         <div class="meta-chip"><span class="k">Дней всего</span><span class="v">8</span></div>
-        <div class="meta-chip"><span class="k">Локаций</span><span class="v">5 ключевых точек</span></div>
+        <div class="meta-chip"><span class="k">Локаций</span><span class="v">9 (5 ключевых + 4 проездом)</span></div>
         <div class="meta-chip"><span class="k">Ночлег</span><span class="v">Гостевые дома + палатка</span></div>
         <div class="meta-chip"><span class="k">В машине</span><span class="v">4 человека</span></div>
       </div>
@@ -415,7 +431,7 @@
       <h1>День за <span>днём</span>.</h1>
       <p class="plan-intro">
         От Челябинска / Южноуральска до Горного Алтая — <b>≈1900 км</b> (около суток за рулём с остановками).
-        Маршрут сжат до 5 ключевых точек — только природа, без лишних перегонов.
+        Маршрут сжат до 5 ключевых точек + 4 села проездом — только природа, без лишних перегонов.
         В условиях дефицита бензина каждая заправка на счету: заправляйтесь по полному баку в Барнауле, Бийске и Акташе.
         <b>8 дней</b> — комфортный темп. Если нужно уложиться в <b>7 дней</b> — убираем свободное утро на день 6 и выезжаем раньше.
       </p>
@@ -467,7 +483,8 @@ const CATS = {
   pass:    {label:'Перевал',     color:'var(--terracotta)'},
   forest:  {label:'Лес',         color:'var(--cedar)'},
   history: {label:'История',     color:'var(--violet)'},
-  mars:    {label:'Марс',        color:'var(--mars)'}
+  mars:    {label:'Марс',        color:'var(--mars)'},
+  village: {label:'Село',        color:'var(--sand)'}
 };
 
 const LOCATIONS = [
@@ -509,6 +526,16 @@ const LOCATIONS = [
     ]
   },
   {
+    id:'cherga', km:535, approx:true, passThrough:true, cat:'village',
+    name:'Черга',
+    short:'Старинное село, деревянные дома на фоне Чергинского хребта. Можно притормозить на сувениры.'
+  },
+  {
+    id:'shebalino', km:564, approx:true, passThrough:true, cat:'village',
+    name:'Шебалино',
+    short:'Большое алтайское село в горной долине. Красивый вид на хребты с тракта.'
+  },
+  {
     id:'seminsky', km:583, approx:false, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_south_direction.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chuytr.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_north_direction.jpg'],
     name:'Семинский перевал', cat:'forest',
     short:'Первый серьёзный перевал тракта (≈1717 м), граница Северного и Центрального Алтая — кедровый лес и памятник дружбе народов.',
@@ -516,8 +543,7 @@ const LOCATIONS = [
       'Прогулка у стелы в честь вхождения Алтая в состав России',
       'Кедровый лес рядом со смотровой',
       'По желанию — более длинный подъём на гору Сарлык (полдня, средняя сложность)',
-      'Рынок: кедровые орехи, травяной чай, мёд',
-      'Проезд через старинные села Черга и Шебалино — деревянные дома на фоне хребтов'
+      'Рынок: кедровые орехи, травяной чай, мёд'
     ],
     difficulty:'Лёгкая (Сарлык — средняя)', duration:'30–40 мин · Сарлык — 4–5 ч',
     outfit:'Зелёный или клетчатый — в цвет кедрового леса',
@@ -529,14 +555,18 @@ const LOCATIONS = [
     ]
   },
   {
+    id:'onguday', km:640, approx:true, passThrough:true, cat:'village',
+    name:'Онгудай',
+    short:'Райцентр в окружении гор. Хорошая точка для ночлега — и отличное звёздное небо.'
+  },
+  {
     id:'chiketaman', km:659, approx:false, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_north_direction.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_south_direction.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chuysky_Trakt_in_Ongudaysky_District.jpg'],
     name:'Перевал Чике-Таман', cat:'pass',
     short:'Самый фотогеничный серпантин тракта: смотровая площадка прямо над петлями дороги, рядом — участок старого тракта почти вековой давности.',
     activities:[
       'Смотровая площадка над серпантином',
       'Прогулка по старой дороге 1930-х годов',
-      'Травяной чай и кедровые орехи с машины у местных',
-      'Село Онгудай (640 км) — остановка в окружении гор, отличное место для ночлега под звездным небом'
+      'Травяной чай и кедровые орехи с машины у местных'
     ],
     difficulty:'Лёгкая', duration:'30–40 мин',
     outfit:'Терракотовый или горчичный — перекликается с цветом скал',
@@ -548,14 +578,18 @@ const LOCATIONS = [
     ]
   },
   {
+    id:'inya', km:680, approx:true, passThrough:true, cat:'village',
+    name:'Иня',
+    short:'Маленькое село у подножия скал, прямо перед слиянием Чуи и Катуни. Темное небо, тишина.'
+  },
+  {
     id:'chuyoozy', km:715, approx:true, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%B8%D0%B4_%D0%BD%D0%B0_%D0%AE%D0%B6%D0%BD%D0%BE-%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A5%D1%80%D0%B5%D0%B1%D0%B5%D1%82.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%B8%D0%B4_%D0%BD%D0%B0_%D0%A1%D0%B5%D0%B2%D0%B5%D1%80%D0%BE-%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A5%D1%80%D0%B5%D0%B1%D0%B5%D1%82.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chuysky_trakt.jpg'],
     name:'Чуй-Оозы и петроглифы Калбак-Таш', cat:'history',
     short:'Слияние Чуи и Катуни — две реки разного цвета встречаются у подножия скал с петроглифами возрастом до 5000 лет.',
     activities:[
       'Смотровая на слияние двух рек разного цвета',
       'Экскурсия по петроглифам Калбак-Таш (можно с местным гидом)',
-      'Памятник Кольке Снегирёву — история тракта',
-      'Село Иня (680 км) у подножия скал — тёмное небо, звёзды видны отлично'
+      'Памятник Кольке Снегирёву — история тракта'
     ],
     difficulty:'Лёгкая', duration:'≈1–1.5 ч',
     outfit:'Песочный или охра — созвучно древним рисункам на камне',
@@ -605,13 +639,13 @@ const DAYS = [
     n:5, type:'Дорога + активности', accent:'var(--terracotta)',
     route:'Чемал → Семинский перевал → Чике-Таман → Чуй-Оозы',
     stats:['≈360 км', '≈7–8 ч с остановками'],
-    stops:['Семинский перевал — прогулка, кедровый лес', 'Перевал Чике-Таман — смотровая площадка и старая дорога 1930-х', 'Слияние Чуи и Катуни (Чуй-Оозы) + петроглифы Калбак-Таш'],
+    stops:['Промежуток: Черга (535 км) и Шебалино (564 км) — проездом, деревянные села в горах', 'Семинский перевал — прогулка, кедровый лес', 'Онгудай (640 км) — обед и ночлег в окружении гор, отличное звездное небо', 'Перевал Чике-Таман — смотровая площадка и старая дорога 1930-х', 'Иня (680 км) — проездом у подножия скал', 'Слияние Чуи и Катуни (Чуй-Оозы) + петроглифы Калбак-Таш'],
     overnight:'Гостевой дом в Онгудае (640 км) — оттуда отличное звёздное небо и горы вокруг. Либо возвращение в Чемал.',
     tip:'Насыщенный день. Чуй-Оозы — самая дальняя точка маршрута, после неё разворачиваемся.'
   },
   {
     n:6, type:'Возвращение', accent:'var(--cedar)',
-    route:'Онгудай / Чемал → Барнаул',
+    route:'Онгудай → Барнаул',
     stats:['≈400 км', '≈5–6 ч'],
     stops:['Утро — прощальная прогулка: можно доехать до того места, которое понравилось больше всего', 'После обеда — дорога до Барнаула'],
     overnight:'Отель «Колумб» (пр-т Ленина, 82) или Отель «Центральная» (ул. Пролетарская, 40)',
@@ -619,7 +653,7 @@ const DAYS = [
   },
   {
     n:7, type:'Дорога обратно', accent:'var(--terracotta)',
-    route:'Акташ → Барнаул',
+    route:'Онгудай / Чемал → Барнаул',
     stats:['≈600 км', '≈8–9 ч'],
     stops:['Утро — прощальная прогулка (можно дополнить тем, что пропустили)', 'После обеда — дорога до Барнаула'],
     overnight:'Отель «Колумб» (пр-т Ленина, 82) или Отель «Центральная» (ул. Пролетарская, 40)',
@@ -650,10 +684,10 @@ const minKm = 440, maxKm = 880;
 function pct(km){ return ((km - minKm) / (maxKm - minKm)) * 94 + 3; }
 
 document.getElementById('ruler').innerHTML = '<div class="track"></div>' + LOCATIONS.map(l => `
-  <div class="pin" style="left:${pct(l.km)}%; color:${CATS[l.cat].color}" data-target="${l.id}">
+  <div class="pin${l.passThrough?' small':''}" style="left:${pct(l.km)}%; color:${CATS[l.cat].color}" data-target="${l.id}">
     <div class="dot" style="background:${CATS[l.cat].color}"></div>
-    <div class="km mono">${l.approx?'≈':''}${l.km} км</div>
-    <div class="nm">${l.name.split(' и ')[0].split(':')[0].split(' — ')[0]}</div>
+    <div class="km mono">≈${l.km} км</div>
+    <div class="nm">${l.passThrough ? l.name : l.name.split(' и ')[0].split(':')[0].split(' — ')[0]}</div>
   </div>
 `).join('');
 
@@ -665,7 +699,21 @@ document.getElementById('legend').innerHTML = usedCats.map(c => `
 
 // ---------- RENDER CARDS ----------
 const cardsEl = document.getElementById('cards');
-cardsEl.innerHTML = LOCATIONS.map(l => `
+cardsEl.innerHTML = LOCATIONS.map(l => {
+  if(l.passThrough) return `
+  <article class="card compact" id="${l.id}" style="--accent:${CATS[l.cat].color}">
+    <div class="card-head">
+      <div class="badges">
+        <span class="badge km">≈${l.km} км</span>
+        <span class="badge">${CATS[l.cat].label}</span>
+      </div>
+    </div>
+    <div class="inner">
+      <h3>${l.name}</h3>
+      <p class="short">${l.short}</p>
+    </div>
+  </article>`;
+  return `
   <article class="card" id="${l.id}" style="--accent:${CATS[l.cat].color}">
     <div class="card-head">
       <div class="badges">
@@ -707,8 +755,8 @@ cardsEl.innerHTML = LOCATIONS.map(l => `
       </div>
       <div class="outfit"><span class="chip"></span>Образ: ${l.outfit}</div>
     </div>
-  </article>
-`).join('');
+  </article>`;
+}).join('');
 
 // ---------- RULER CLICK ----------
 document.querySelectorAll('.pin').forEach(pin=>{

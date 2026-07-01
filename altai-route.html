@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Алтай — наш первый маршрут</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12151d;
+    --bg-soft:#171c27;
+    --card:#1b202c;
+    --card-hover:#212736;
+    --line:#2b3143;
+    --ink:#EDEAE1;
+    --ink-dim:#9aa1b4;
+    --ink-faint:#666e83;
+
+    --turquoise:#4CBAAF;
+    --terracotta:#D2703C;
+    --cedar:#7C9B6C;
+    --violet:#9385CF;
+    --mars:#C15A34;
+    --sand:#C9A46A;
+    --dusk:#5B7B9A;
+
+    --font-display:'Oswald',sans-serif;
+    --font-body:'PT Serif',serif;
+    --font-mono:'JetBrains Mono',monospace;
+
+    --radius:14px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(76,186,175,0.10), transparent 60%),
+      radial-gradient(ellipse 900px 600px at 90% 10%, rgba(193,90,52,0.09), transparent 60%),
+      radial-gradient(ellipse 1200px 800px at 50% 120%, rgba(147,133,207,0.08), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+  }
+  a{color:inherit;}
+  h1,h2,h3,h4{font-family:var(--font-display); text-transform:uppercase; letter-spacing:0.02em; margin:0;}
+  .mono{font-family:var(--font-mono);}
+
+  /* ---------- NAV ---------- */
+  header.topnav{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 28px;
+    background:rgba(18,21,29,0.88);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+    gap:12px; flex-wrap:wrap;
+  }
+  .brand{
+    display:flex; align-items:baseline; gap:10px;
+  }
+  .brand .mark{
+    font-family:var(--font-mono); font-size:11px; color:var(--sand);
+    border:1px solid var(--sand); border-radius:4px; padding:2px 7px;
+  }
+  .brand .title{font-family:var(--font-display); font-size:17px; letter-spacing:0.06em;}
+  .brand .title span{color:var(--terracotta);}
+  nav.views{display:flex; gap:6px; background:var(--bg-soft); padding:4px; border-radius:10px; border:1px solid var(--line);}
+  nav.views button{
+    font-family:var(--font-display); text-transform:uppercase; letter-spacing:0.04em;
+    font-size:13px; color:var(--ink-dim); background:transparent; border:none;
+    padding:9px 18px; border-radius:7px; cursor:pointer; transition:all .2s ease;
+  }
+  nav.views button.active{background:var(--turquoise); color:#0d1712; font-weight:600;}
+  nav.views button:not(.active):hover{color:var(--ink); background:var(--card-hover);}
+
+  main{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 24px 90px;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:50px 0 28px; border-bottom:1px dashed var(--line); margin-bottom:32px;}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12.5px; color:var(--turquoise);
+    letter-spacing:0.08em; text-transform:uppercase; margin-bottom:14px; display:block;
+  }
+  .hero h1{font-size:clamp(34px,5.5vw,58px); line-height:1.02; margin-bottom:16px; max-width:860px;}
+  .hero h1 span{color:var(--terracotta);}
+  .hero p.lede{font-size:17px; color:var(--ink-dim); max-width:680px; margin-bottom:24px;}
+  .meta-row{display:flex; flex-wrap:wrap; gap:10px;}
+  .meta-chip{
+    display:flex; flex-direction:column; gap:2px;
+    border:1px solid var(--line); border-radius:10px; padding:9px 16px;
+    background:var(--bg-soft);
+  }
+  .meta-chip .k{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.05em;}
+  .meta-chip .v{font-family:var(--font-display); font-size:15px; letter-spacing:.02em;}
+
+  /* ---------- OVERVIEW STATS ---------- */
+  .overview-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:36px;}
+  .stat-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
+    text-align:center;
+  }
+  .stat-card .num{font-family:var(--font-display); font-size:28px; color:var(--turquoise);}
+  .stat-card .label{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.05em; margin-top:2px;}
+
+  /* ---------- RULER (signature element) ---------- */
+  .ruler-wrap{margin:34px 0 40px;}
+  .ruler-label{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;}
+  .ruler-label h2{font-size:14px; color:var(--ink-dim); letter-spacing:.08em;}
+  .ruler-label .note{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint);}
+  .ruler-scroll{overflow-x:auto; overflow-y:hidden; padding-bottom:14px;}
+  .ruler{
+    position:relative; height:86px; min-width:940px;
+    margin:0 10px;
+  }
+  .ruler .track{
+    position:absolute; left:0; right:0; top:38px; height:2px;
+    background:linear-gradient(90deg, var(--turquoise), var(--sand) 30%, var(--terracotta) 55%, var(--mars) 80%, var(--violet));
+    opacity:.55;
+    border-radius:2px;
+  }
+  .ruler .pin{
+    position:absolute; top:22px; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    cursor:pointer; width:70px;
+  }
+  .ruler .pin .dot{
+    width:14px; height:14px; border-radius:50%; border:3px solid var(--bg);
+    box-shadow:0 0 0 2px var(--line);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .ruler .pin:hover .dot, .ruler .pin.active .dot{transform:scale(1.35); box-shadow:0 0 0 2px currentColor;}
+  .ruler .pin .km{font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint); white-space:nowrap;}
+  .ruler .pin .nm{
+    font-family:var(--font-display); font-size:10.5px; text-transform:uppercase;
+    color:var(--ink-dim); text-align:center; line-height:1.15; max-width:70px;
+    opacity:0; transform:translateY(-4px); transition:all .18s ease;
+  }
+  .ruler .pin:hover .nm, .ruler .pin.active .nm{opacity:1; transform:translateY(0); color:var(--ink);}
+
+  /* ---------- LEGEND ---------- */
+  .legend{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px;}
+  .legend .item{
+    display:flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:11px;
+    color:var(--ink-dim); border:1px solid var(--line); border-radius:20px; padding:5px 11px;
+    transition:background .2s;
+  }
+  .legend .item:hover{background:var(--card);}
+  .legend .sw{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+
+  /* ---------- TOGGLE ALL / NONE ---------- */
+  .loc-actions{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;}
+  .loc-actions button{
+    font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+    background:var(--bg-soft); border:1px solid var(--line); color:var(--ink-dim);
+    padding:7px 16px; border-radius:8px; cursor:pointer; transition:all .18s;
+  }
+  .loc-actions button:hover{color:var(--ink); background:var(--card-hover);}
+
+  /* ---------- CARDS ---------- */
+  .grid{display:grid; grid-template-columns:1fr; gap:16px;}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px; scroll-margin-top:120px; transition:border-color .25s ease, transform .25s ease;
+    position:relative; overflow:hidden;
+  }
+  .card.pulse{border-color:var(--turquoise);}
+  .card-img-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:8px;
+    margin-top:4px;
+  }
+  .card-img-grid img{
+    width:100%; aspect-ratio:16/10; object-fit:cover;
+    border-radius:var(--radius-sm); cursor:pointer;
+    border:1px solid var(--line);
+    transition:transform .2s ease, border-color .2s;
+  }
+  .card-img-grid img:hover{
+    transform:scale(1.02);
+    border-color:var(--accent, var(--turquoise));
+  }
+  .card-img-grid .wide{grid-column:1/-1; aspect-ratio:16/7;}
+
+  /* lightbox */
+  .lb-overlay{
+    position:fixed; inset:0; z-index:999;
+    background:rgba(0,0,0,0.88);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .lb-overlay.open{opacity:1; pointer-events:auto;}
+  .lb-overlay img{
+    max-width:90vw; max-height:90vh;
+    border-radius:var(--radius);
+    box-shadow:0 4px 40px rgba(0,0,0,0.6);
+  }
+  .lb-close{
+    position:absolute; top:20px; right:28px;
+    font-family:var(--font-mono); font-size:28px;
+    color:#fff; cursor:pointer; background:none; border:none;
+    opacity:0.6; transition:opacity .2s;
+  }
+  .lb-close:hover{opacity:1;}
+
+  .card::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:var(--accent, var(--turquoise));
+  }
+  .card-head{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:12px;}
+  .card-head .badges{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .badge{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.03em;
+    padding:4px 10px; border-radius:20px; border:1px solid var(--line); color:var(--ink-dim);
+  }
+  .badge.km{color:var(--bg); background:var(--accent, var(--turquoise)); border:none; font-weight:700;}
+  .badge.detour{border-style:dashed; color:var(--sand); border-color:var(--sand);}
+  .badge.photo{background:rgba(255,255,255,0.06); border-color:transparent; color:var(--ink-dim);}
+  .badge.photo span{color:var(--violet);}
+  .card h3{font-size:23px; margin-bottom:5px; color:var(--ink);}
+  .card .short{color:var(--ink-dim); font-size:15px; max-width:700px; margin-bottom:14px;}
+  .stat-row{display:flex; gap:22px; margin-bottom:16px; flex-wrap:wrap;}
+  .stat{font-family:var(--font-mono); font-size:12.5px; color:var(--ink-faint);}
+  .stat b{color:var(--ink); font-weight:500;}
+
+  .tabs{display:flex; gap:6px; margin-bottom:14px; border-bottom:1px solid var(--line);}
+  .tab-btn{
+    font-family:var(--font-display); text-transform:uppercase; font-size:12.5px; letter-spacing:.03em;
+    background:none; border:none; color:var(--ink-faint); padding:9px 4px; margin-right:18px;
+    cursor:pointer; border-bottom:2px solid transparent; transition:all .15s ease; white-space:nowrap;
+  }
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--accent, var(--turquoise));}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(3px);} to{opacity:1; transform:translateY(0);}}
+
+  .activities{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;}
+  .activities li{padding-left:20px; position:relative; font-size:15px; color:var(--ink);}
+  .activities li::before{content:"—"; position:absolute; left:0; color:var(--accent, var(--turquoise));}
+
+  .content-ideas{display:flex; flex-direction:column; gap:10px;}
+  .idea{
+    display:grid; grid-template-columns:96px 1fr; gap:3px 14px;
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  }
+  .idea .tag{
+    font-family:var(--font-mono); font-size:11px; text-transform:uppercase; color:var(--accent, var(--turquoise));
+    letter-spacing:.04em; grid-row:1; grid-column:1;
+  }
+  .idea .txt{font-size:14px; color:var(--ink-dim); grid-row:1; grid-column:2;}
+  .idea .hashtags{
+    grid-row:2; grid-column:1/-1; font-family:var(--font-mono); font-size:10.5px;
+    color:var(--ink-faint); margin-top:4px;
+  }
+  .outfit{
+    margin-top:8px; display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-faint);
+    font-family:var(--font-mono);
+  }
+  .outfit .chip{width:14px; height:14px; border-radius:4px; background:var(--accent, var(--turquoise)); flex-shrink:0;}
+
+  /* ---------- PLAN VIEW ---------- */
+  #view-plan{display:none;}
+  #view-plan.active{display:block;}
+  #view-route.active{display:block;}
+  #view-route{display:none;}
+
+  .plan-intro{max-width:780px; margin-bottom:28px; color:var(--ink-dim); font-size:15.5px;}
+  .plan-intro b{color:var(--ink);}
+
+  .callouts{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:36px;}
+  @media (max-width:720px){.callouts{grid-template-columns:1fr;}}
+  .callout{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px;}
+  .callout h4{font-size:13px; letter-spacing:.05em; color:var(--sand); margin-bottom:10px;}
+  .callout ul{margin:0; padding-left:18px; font-size:14px; color:var(--ink-dim); line-height:1.7;}
+  .callout li{margin-bottom:5px;}
+
+  .timeline{position:relative; padding-left:30px; border-left:2px solid var(--line);}
+  .day{position:relative; padding-bottom:32px;}
+  .day:last-child{padding-bottom:0;}
+  .day::before{
+    content:attr(data-num);
+    position:absolute; left:-46px; top:0;
+    width:30px; height:30px; border-radius:50%;
+    background:var(--bg-soft); border:2px solid var(--accent, var(--turquoise));
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--ink);
+  }
+  .day-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px;}
+  .day-head{display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; align-items:baseline; margin-bottom:12px;}
+  .day-head h3{font-size:18px; color:var(--ink);}
+  .day-type{
+    font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase;
+    padding:3px 10px; border-radius:20px; border:1px solid var(--line); color:var(--ink-faint);
+  }
+  .day-stats{display:flex; gap:18px; margin-bottom:12px; flex-wrap:wrap;}
+  .day-stats .stat{font-family:var(--font-mono); font-size:12.5px;}
+  .day ul.stops{list-style:none; margin:0 0 10px; padding:0; display:flex; flex-direction:column; gap:6px;}
+  .day ul.stops li{padding-left:18px; position:relative; font-size:14px; color:var(--ink-dim);}
+  .day ul.stops li::before{content:"·"; position:absolute; left:0; color:var(--accent, var(--turquoise)); font-weight:700;}
+  .overnight{font-size:13px; color:var(--sand); font-family:var(--font-mono); border-top:1px dashed var(--line); padding-top:10px; margin-top:6px;}
+  .tip{font-size:13px; color:var(--terracotta); margin-top:8px; font-style:italic; line-height:1.5;}
+
+  .prep-sections{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:36px;}
+  @media (max-width:720px){.prep-sections{grid-template-columns:1fr;}}
+
+  footer{max-width:1180px; margin:60px auto 30px; padding:20px 24px; color:var(--ink-faint); font-size:13px; text-align:center; position:relative; z-index:1;}
+
+  /* ---------- SCROLL INDICATOR ---------- */
+  .scroll-hint{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint);
+    margin-top:8px; animation:shimmer 2s infinite;
+  }
+  @keyframes shimmer{0%,100%{opacity:1}50%{opacity:0.4}}
+
+  @media (max-width:640px){
+    header.topnav{padding:10px 14px;}
+    .hero{padding:32px 0 20px;}
+    .hero h1{font-size:26px;}
+    .hero p.lede{font-size:15px;}
+    .card{padding:20px;}
+    .ruler .pin .nm{opacity:1; transform:none; font-size:9px;}
+    .idea{grid-template-columns:1fr;}
+    .idea .tag{grid-column:1;}
+    .idea .txt{grid-column:1;}
+    .overview-grid{grid-template-columns:repeat(2,1fr);}
+  }
+
+  @media (max-width:480px){
+    .brand .title{font-size:14px;}
+    nav.views button{padding:7px 12px; font-size:11px;}
+    .meta-row .meta-chip{padding:7px 12px; flex:1;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="brand">
+    <span class="mark">P-256</span>
+    <span class="title">Челябинск → <span>Алтай</span></span>
+  </div>
+  <nav class="views">
+    <button class="active" data-view="route">Маршрут</button>
+    <button data-view="plan">План поездки</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===================== VIEW: ROUTE ===================== -->
+  <section id="view-route" class="active">
+    <div class="hero">
+      <span class="eyebrow">Челябинская область → Республика Алтай · Чуйский тракт</span>
+      <h1>Первый раз на <span>Алтае</span>.<br>Дороги, перевалы и марсианские горы.</h1>
+      <p class="lede">Автомобильный маршрут по Чуйскому тракту для четверых с акцентом на хайкинг, красивые виды и приключения. С добавлением контент идей для Марусечки. Хайкинг лёгкий и средний — без специальной подготовки, но с настоящими панорамами.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><span class="k">Формат</span><span class="v">Автопутешествие</span></div>
+        <div class="meta-chip"><span class="k">Дней всего</span><span class="v">8 (можно сжать до 7)</span></div>
+        <div class="meta-chip"><span class="k">Локаций</span><span class="v">9 ключевых точек</span></div>
+        <div class="meta-chip"><span class="k">Ночлег</span><span class="v">Гостевые дома + палатка</span></div>
+        <div class="meta-chip"><span class="k">В машине</span><span class="v">4 человека</span></div>
+      </div>
+    </div>
+
+    <div class="overview-grid" id="overviewGrid"></div>
+
+    <div class="ruler-wrap">
+      <div class="ruler-label">
+        <h2>Километраж по Чуйскому тракту</h2>
+        <span class="note">нажмите на точку, чтобы перейти к локации · км от Барнаула</span>
+      </div>
+      <div class="ruler-scroll">
+        <div class="ruler" id="ruler"></div>
+      </div>
+      <div class="scroll-hint">← прокрутите →</div>
+    </div>
+
+    <div class="legend" id="legend"></div>
+
+    <div class="loc-actions">
+      <button id="expandAll">Развернуть все</button>
+      <button id="collapseAll">Свернуть все</button>
+    </div>
+
+    <div class="grid" id="cards"></div>
+  </section>
+
+  <!-- ===================== VIEW: PLAN ===================== -->
+  <section id="view-plan">
+    <div class="hero">
+      <span class="eyebrow">Расписанный план</span>
+      <h1>День за <span>днём</span>.</h1>
+      <p class="plan-intro">
+        От Челябинска / Южноуральска до Горного Алтая — <b>≈2200 км</b> (около суток за рулём с остановками).
+        Чтобы ехать не внапряг — разбиваем дорогу на 3 дня туда, 3 дня активностей и 2 дня обратно.
+        <b>8 дней</b> — комфортный темп. Если нужно уложиться в <b>7 дней</b> — убираем свободное утро на день 6 и выезжаем раньше.
+        Если есть возможность растянуть до <b>9–10 дней</b> — можно добавить ледники Актру или Телецкое озеро.
+      </p>
+    </div>
+
+    <div class="callouts">
+      <div class="callout">
+        <h4>Что взять с собой</h4>
+        <ul>
+          <li>Тёплые вещи на вечер — в степи и в горах холодает даже в июле-августе</li>
+          <li>Треккинговую или просто закрытую удобную обувь</li>
+          <li>Дождевик / ветровку — погода в горах меняется быстро</li>
+          <li>Пауэрбанк и офлайн-карты (Maps.me / 2ГИС) — сеть пропадает участками</li>
+          <li>Наличные — не везде принимают карты, особенно в сёлах</li>
+          <li>Палатку и спальники — пригодятся минимум в Курайской степи</li>
+          <li>Фотоаппарат / стабильный смартфон с настройками вручную</li>
+          <li>Аптечка: от укачивания, пластыри, обезболивающее, антигистаминное</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <h4>Важно знать</h4>
+        <ul>
+          <li>Погранпропуск для этого маршрута не нужен — он требуется южнее Кош-Агача</li>
+          <li>Заправляйтесь заранее: между сёлами на юге тракта АЗС редкие</li>
+          <li>Гостевые дома в сезон (июль–август) лучше бронировать за 2–4 недели</li>
+          <li>Курайская степь = холодные ночи, но лучшее звёздное небо всей поездки</li>
+          <li>Дорога от Челябинска до Новосибирска — по М-5, отличный асфальт</li>
+          <li>Заезд на Кызыл-Чин — по грунтовке (около 7 км), в сухую погоду проедет любая машина</li>
+          <li>Kаждый день проверяйте давление в шинах и уровень масла</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+</main>
+
+<div class="lb-overlay" id="lightbox">
+  <button class="lb-close" id="lbClose">&times;</button>
+  <img id="lbImg" src="" alt="">
+</div>
+
+<footer>Маршрут ориентировочный — расстояния и время в пути указаны примерно и зависят от погоды, дорог и количества остановок.</footer>
+
+<script>
+const CATS = {
+  water:   {label:'Вода',        color:'var(--turquoise)'},
+  pass:    {label:'Перевал',     color:'var(--terracotta)'},
+  forest:  {label:'Лес',         color:'var(--cedar)'},
+  history: {label:'История',     color:'var(--violet)'},
+  night:   {label:'Ночное небо', color:'var(--dusk)'},
+  mars:    {label:'Марс',        color:'var(--mars)'}
+};
+
+const LOCATIONS = [
+  {
+    id:'manzherok', km:470, approx:true, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Chuysky_Trakt_in_Ongudaysky_District.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chuysky_trakt.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/M52-Barnaul.JPG'],
+    name:'Манжерок и гора Синюха', cat:'water',
+    short:'Мягкая разминка перед горами: озеро с легендами, кресельный подъёмник и первая панорама на Катунь.',
+    activities:[
+      'Подъём на кресельном подъёмнике до смотровой на горе Синюха',
+      'Прогулка вдоль озера Манжерокское',
+      'Сувенирный рынок, алтайский мёд и чай на пробу'
+    ],
+    difficulty:'Лёгкая', duration:'1–1.5 ч',
+    outfit:'Бирюза и белый — в тон Катуни',
+    hashtags:'#манужерок #алтай #первыйразнаалтае #катунь',
+    content:[
+      {t:'Фото', d:'Кадр в кабинке подъёмника: Катунь изгибается внизу, как на карте.'},
+      {t:'Reels', d:'Таймлапс подъёма + смена кадра на панораму сверху. Хук: «Первый раз на Алтае — и сразу под облака».'},
+      {t:'Сторис', d:'Сравнение «ожидание / реальность»: вид из окна машины vs с вершины горы.'}
+    ]
+  },
+  {
+    id:'ustsema', km:496, approx:false, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A2%D1%80%D0%B0%D0%BA%D1%82.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/%D0%A1%D1%82%D0%B0%D1%80%D1%8B%D0%B9_%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D1%82%D1%80%D0%B0%D0%BA%D1%82.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/R256_in_South_Maima.jpg'],
+    name:'Усть-Сема', cat:'water',
+    short:'Развилка Чуйского и Чемальского трактов — здесь сливаются реки Сема и Катунь, стоит остановиться на смотровой.',
+    activities:[
+      'Смотровая площадка на месте слияния рек',
+      'Подвесные пешеходные мостики через Катунь',
+      'Короткая техническая остановка: перекус, заправка'
+    ],
+    difficulty:'Без хайкинга', duration:'30–40 мин',
+    outfit:'Любой яркий верх — хорошо контрастирует с бирюзовой водой',
+    hashtags:'#устьсема #катунь #чуйскийтракт',
+    content:[
+      {t:'Фото', d:'Силуэт на подвесном мостике на фоне бирюзовой воды.'},
+      {t:'Reels', d:'Крупный план воды + текст-вопрос: «Угадаете, почему Катунь такого цвета?»'},
+      {t:'Карусель', d:'5 кадров одной точки в разном свете — если задержитесь на закате.'}
+    ]
+  },
+  {
+    id:'chemal', km:510, approx:true, detour:true, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Bridge_to_Patmos_Island_in_Chemal.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chemal_Hydroelectric_Power_Station.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Monument_to_Chuysky_Trakt_in_Biysk.jpg'],
+    name:'Чемал: остров Патмос и ущелье Чечкыш', cat:'water',
+    short:'Курортное сердце Горного Алтая: подвесной мост на остров с часовней, ГЭС и лёгкий поход к водопаду в ущелье Чечкыш.',
+    activities:[
+      'Остров Патмос — подвесной мост и часовня Иоанна Богослова',
+      'Чемальская ГЭС и порог рядом с плотиной',
+      'Хайкинг в ущелье Чечкыш к водопаду (≈3–4 км туда-обратно)',
+      'Рафтинг по Катуни (опционально, 2–3 ч)'
+    ],
+    difficulty:'Лёгкая / средняя (Чечкыш)', duration:'Патмос — 40 мин · Чечкыш — ≈2 ч',
+    outfit:'Тёмный низ + светлый верх — хорошо смотрится на фоне скал и моста',
+    hashtags:'#чемал #патмос #чечкыш #алтай #рафтинг',
+    content:[
+      {t:'Фото', d:'На подвесном мосту к острову, часовня и скалы на фоне.'},
+      {t:'Reels', d:'Проход по качающемуся мосту с эффектом «ветер в волосах», в конце — панорама с острова.'},
+      {t:'Влог', d:'«Один день в Чемале» — подъём, мост, водопад, вечер у реки, единым роликом 60 сек.'}
+    ]
+  },
+  {
+    id:'seminsky', km:583, approx:false, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_south_direction.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chuytr.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_north_direction.jpg'],
+    name:'Семинский перевал', cat:'forest',
+    short:'Первый серьёзный перевал тракта (≈1717 м), граница Северного и Центрального Алтая — кедровый лес и памятник дружбе народов.',
+    activities:[
+      'Прогулка у стелы в честь вхождения Алтая в состав России',
+      'Кедровый лес рядом со смотровой',
+      'По желанию — более длинный подъём на гору Сарлык (полдня, средняя сложность)',
+      'Рынок: кедровые орехи, травяной чай, мёд'
+    ],
+    difficulty:'Лёгкая (Сарлык — средняя)', duration:'30–40 мин · Сарлык — 4–5 ч',
+    outfit:'Зелёный или клетчатый — в цвет кедрового леса',
+    hashtags:'#семинскийперевал #алтай #кедр #кедровыеорехи',
+    content:[
+      {t:'Фото', d:'У стелы перевала, кедры на фоне неба.'},
+      {t:'Reels', d:'«Мы поднялись выше облаков? Нет, но почти» — вид с перевала под драматичную музыку.'},
+      {t:'Сторис', d:'Дегустация кедровых орехов или травяного чая на камеру — живая реакция.'}
+    ]
+  },
+  {
+    id:'chiketaman', km:659, approx:false, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_north_direction.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_south_direction.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chuysky_Trakt_in_Ongudaysky_District.jpg'],
+    name:'Перевал Чике-Таман', cat:'pass',
+    short:'Самый фотогеничный серпантин тракта: смотровая площадка прямо над петлями дороги, рядом — участок старого тракта почти вековой давности.',
+    activities:[
+      'Смотровая площадка над серпантином',
+      'Прогулка по старой дороге 1930-х годов',
+      'Травяной чай и кедровые орехи с машины у местных'
+    ],
+    difficulty:'Лёгкая', duration:'30–40 мин',
+    outfit:'Терракотовый или горчичный — перекликается с цветом скал',
+    hashtags:'#чикетаман #серпантин #чуйскийтракт #дорога',
+    content:[
+      {t:'Фото', d:'С высоты смотровой на изгибы серпантина внизу.'},
+      {t:'Reels', d:'«До / после»: кадры старой грунтовой дороги vs новый асфальт, с текстовыми вставками.'},
+      {t:'POV', d:'Телефон на держателе — проезд по серпантину от первого лица, только вид.'}
+    ]
+  },
+  {
+    id:'chuyoozy', km:715, approx:true, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%B8%D0%B4_%D0%BD%D0%B0_%D0%AE%D0%B6%D0%BD%D0%BE-%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A5%D1%80%D0%B5%D0%B1%D0%B5%D1%82.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%B8%D0%B4_%D0%BD%D0%B0_%D0%A1%D0%B5%D0%B2%D0%B5%D1%80%D0%BE-%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A5%D1%80%D0%B5%D0%B1%D0%B5%D1%82.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chuysky_trakt.jpg'],
+    name:'Чуй-Оозы и петроглифы Калбак-Таш', cat:'history',
+    short:'Место слияния Чуи и Катуни — и рядом одно из крупнейших на Алтае святилищ с наскальными рисунками возрастом до 5000 лет.',
+    activities:[
+      'Смотровая на слияние двух рек разного цвета',
+      'Экскурсия по петроглифам Калбак-Таш (можно с местным гидом)',
+      'Памятник Кольке Снегирёву — история тракта'
+    ],
+    difficulty:'Лёгкая', duration:'≈1–1.5 ч',
+    outfit:'Песочный или охра — созвучно древним рисункам на камне',
+    hashtags:'#чуйоозы #калбакташ #петроглифы #алтай #история',
+    content:[
+      {t:'Фото', d:'На фоне слияния рек — граница цвета воды видна невооружённым глазом.'},
+      {t:'Reels', d:'«Здесь встречаются две реки — и почти не смешиваются» с акцентом на границу цвета воды.'},
+      {t:'Пост', d:'Короткий рассказ о петроглифах в подписи — такой контент хорошо заходит в сохранения.'}
+    ]
+  },
+  {
+    id:'geyser', km:785, approx:true, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Chuysky_Trakt_in_Ongudaysky_District.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A2%D1%80%D0%B0%D0%BA%D1%82.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_north_direction.jpg'],
+    name:'Гейзерное озеро', cat:'water',
+    short:'Небольшое термальное озеро с гипнотическими сине-бирюзовыми узорами на дне — одна из самых снимаемых точек Алтая.',
+    activities:[
+      'Короткая прогулка от парковки до озера',
+      'Наблюдение за узорами на дне (в воду заходить нельзя — термальный источник)'
+    ],
+    difficulty:'Лёгкая', duration:'20–30 мин',
+    outfit:'Синий или бирюзовый — сольётесь с озером в лучшем смысле',
+    hashtags:'#гейзерноеозеро #алтай #бирюза #термальныйисточник',
+    content:[
+      {t:'Фото', d:'Сверху вниз на воду, без людей в кадре — узоры на дне работают сами по себе.'},
+      {t:'Reels', d:'Гипнотический зацикленный (loop) ролик кругов на воде — идеально под медленную музыку.'},
+      {t:'Подпись', d:'«Маленькая Атлантида Алтая» — с вопросом к подписчикам, откуда берётся такой цвет.'}
+    ]
+  },
+  {
+    id:'kurai', km:822, approx:true, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%B8%D0%B4_%D0%BD%D0%B0_%D0%A1%D0%B5%D0%B2%D0%B5%D1%80%D0%BE-%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A5%D1%80%D0%B5%D0%B1%D0%B5%D1%82.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%B8%D0%B4_%D0%BD%D0%B0_%D0%AE%D0%B6%D0%BD%D0%BE-%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A5%D1%80%D0%B5%D0%B1%D0%B5%D1%82.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A2%D1%80%D0%B0%D0%BA%D1%82.jpg'],
+    name:'Курайская степь', cat:'night',
+    short:'Огромная высокогорная степь с панорамой на заснеженный Северо-Чуйский хребет — и одно из лучших мест на маршруте для ночёвки под звёздами.',
+    activities:[
+      'Смотровая площадка на Северо-Чуйский хребет',
+      'Ночёвка в палатках — минимальная засветка, отличное небо',
+      'По желанию — выезд к турбазе и виду на ледники Актру (доп. день)'
+    ],
+    difficulty:'Лёгкая (смотровая) / целый день (Актру)', duration:'15–20 мин · Актру — от полудня',
+    outfit:'Тёмно-синий или индиго — под цвет ночного неба',
+    hashtags:'#курайскаястепь #алтай #звезды #подоткрытымнебом #ночевка',
+    content:[
+      {t:'Фото', d:'Силуэт на фоне хребта в час заката — контровой свет работает лучше всего.'},
+      {t:'Reels', d:'Таймлапс звёздного неба (нужен штатив) — подпись «Такого неба нет в городе».'},
+      {t:'Влог', d:'«Ночь в палатке на Алтае» — звуки степи, рассвет утром.'}
+    ]
+  },
+  {
+    id:'kyzylchin', km:864, approx:false, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_north_direction.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A2%D1%80%D0%B0%D0%BA%D1%82.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%B8%D0%B4_%D0%BD%D0%B0_%D0%AE%D0%B6%D0%BD%D0%BE-%D0%A7%D1%83%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%A5%D1%80%D0%B5%D0%B1%D0%B5%D1%82.jpg'],
+    name:'Кызыл-Чин — «Алтайский Марс»', cat:'mars',
+    short:'Урочище с разноцветными холмами: красные, оранжевые, сине-фиолетовые оттенки минералов — по легенде, здесь было дно древнего моря.',
+    activities:[
+      'Марс-1 — лёгкая прогулка по цветным холмам (1.5–2 км)',
+      'Марс-2 — маршрут вдоль реки, менее туристический, требует крепкой обуви (4–5 км)',
+      'Фотопрогулка по «марсианской» долине в любое время суток'
+    ],
+    difficulty:'Марс-1 лёгкая · Марс-2 средняя', duration:'1–3 ч в зависимости от маршрута',
+    outfit:'Контрастный однотонный образ (белый, синий, изумрудный) — на фоне красных гор смотрится как на другой планете',
+    hashtags:'#кызылчин #алтайскиймарс #марс #алтай #неземныепейзажи',
+    content:[
+      {t:'Фото', d:'В ярком однотонном образе на фоне красных склонов — контраст решает всё.'},
+      {t:'Reels', d:'«Мы на Марсе» — переход кадра с эффектом телепортации между «городом» и «Марсом».'},
+      {t:'Карусель', d:'«5 оттенков Марса» — макросъёмка минералов + общие планы.'}
+    ]
+  }
+];
+
+const DAYS = [
+  {
+    n:1, type:'Дорога', accent:'var(--terracotta)',
+    route:'Челябинск / Южноуральск → Петропавловск (KZ) → Омск',
+    stats:['≈930 км', '≈11–12 ч'],
+    stops:['Ранний старт (6–7 утра), чтобы пройти границу без очереди', 'Обед — Петропавловск, казахская кухня (бешбармак, лагман)', 'Вечером — Омск, заселение в гостиницу'],
+    overnight:'Ibis Sibir Омск (ул. Ленина, 22) или Азимут Омск (ул. Ленина, 20)',
+    tip:'Границу с Казахстаном проходили? Нужны загранпаспорта. Если нет или не хотите — езжайте через Курган → Новосибирск (≈+200 км, но без границы).'
+  },
+  {
+    n:2, type:'Дорога', accent:'var(--terracotta)',
+    route:'Омск → Новосибирск → Барнаул',
+    stats:['≈700 км', '≈8–9 ч'],
+    stops:['Завтрак в Омске, выезд в 8 утра', 'Остановка в Новосибирске — обед, размяться', 'После обеда — перегон до Барнаула (~230 км, 3 ч)'],
+    overnight:'Отель «Колумб» (пр-т Ленина, 82) или Отель «Центральная» (ул. Пролетарская, 40). Рейтинг 4.5+ на Ostrovok.',
+    tip:'Барнаул — хорошая точка для вечерней прогулки. Набережная Оби, улица Мало-Тобольская.'
+  },
+  {
+    n:3, type:'Дорога + начало активностей', accent:'var(--sand)',
+    route:'Барнаул → Бийск → Манжерок',
+    stats:['≈380 км', '≈5 ч с остановками'],
+    stops:['Утро — Барнаул → Бийск (160 км, 2 ч). Заезд в Бийск не обязателен — сразу поворот на Манжерок', 'После обеда — гора Синюха и озеро Манжерокское', 'Заселение в гостевой дом'],
+    overnight:'Гостевой дом «Усадьба Манжерок» (ул. Набережная, 1А) или «White House Манжерок» — оба с видом на озеро. Рейтинг 4.7–4.9 на Ostrovok.',
+    tip:'На горе Синюха можно застать закат. Очень рекомендую — виды на Катунь целиком.'
+  },
+  {
+    n:4, type:'Активности', accent:'var(--turquoise)',
+    route:'Манжерок → Чемал',
+    stats:['≈60 км', '≈1 ч в пути'],
+    stops:['Утро — переезд в Чемал (по желанию)', 'Остров Патмос, подвесной мост, часовня', 'Ущелье Чечкыш — хайкинг к водопаду 3–4 км', 'Вечер — купание в бане на территории турбазы или отдых у реки'],
+    overnight:'Турбаза «Берег Надежды» (ул. Береговая, 32) или Гостевой дом «У Катуни» (ул. Береговая, 47). Рейтинг 4.6–4.8.',
+    tip:'Если не хотите рафтинг, можно просто посидеть на берегу Катуни — виды там бесплатные.'
+  },
+  {
+    n:5, type:'Дорога + активности', accent:'var(--terracotta)',
+    route:'Чемал → Семинский перевал → Чике-Таман → Чуй-Оозы → Акташ',
+    stats:['≈350 км', '≈6–7 ч с остановками'],
+    stops:['Семинский перевал — прогулка, кедровый лес', 'Перевал Чике-Таман — смотровая площадка', 'Слияние Чуи и Катуни (Чуй-Оозы) + петроглифы Калбак-Таш'],
+    overnight:'Гостевой дом «Чуйские Зори» (Акташ, ул. Трактовая, 15) или «Меридиан» (Акташ, ул. Трактовая, 42). Рейтинг 4.4–4.6.',
+    tip:'Насыщенный день. Обед — по пути из сумки-холодильника, чтобы не терять время в поисках кафе.'
+  },
+  {
+    n:6, type:'Активности', accent:'var(--mars)',
+    route:'Акташ → Гейзерное озеро → Курайская степь → Кызыл-Чин',
+    stats:['≈90 км', '≈2 ч в пути'],
+    stops:['Утро — Гейзерное озеро (20 мин прогулка)', 'Курайская степь — панорама Северо-Чуйского хребта', 'Кызыл-Чин («Марс») — хайкинг 1.5–5 км'],
+    overnight:'Гостевой дом «Курай» (с. Курай, ул. Центральная, 14), либо палатки в степи. В Курае тихо и тёмное небо.',
+    tip:'Обязательно: тёплые вещи! В степи вечером +5…+10°C даже в жару.'
+  },
+  {
+    n:7, type:'Дорога обратно', accent:'var(--terracotta)',
+    route:'Акташ → Барнаул',
+    stats:['≈600 км', '≈8–9 ч'],
+    stops:['Утро — прощальная прогулка (можно дополнить тем, что пропустили)', 'После обеда — дорога до Барнаула'],
+    overnight:'Отель «Колумб» (пр-т Ленина, 82) или Отель «Центральная» (ул. Пролетарская, 40)',
+    tip:''
+  },
+  {
+    n:8, type:'Дорога обратно', accent:'var(--terracotta)',
+    route:'Барнаул → Новосибирск → Челябинск',
+    stats:['≈1400 км', '≈16–17 ч'],
+    stops:['Длинный перегон. Если сил мало — ночёвка в Новосибирске (добавит +1 день)', 'Выезжать лучше в 5–6 утра'],
+    overnight:'Дома',
+    tip:''
+  }
+];
+
+// ---------- OVERVIEW STATS ----------
+const totalKm = LOCATIONS.reduce((s,l)=>s+l.km,0);
+document.getElementById('overviewGrid').innerHTML = `
+  <div class="stat-card"><div class="num">${LOCATIONS.length}</div><div class="label">Локаций</div></div>
+  <div class="stat-card"><div class="num">${totalKm}</div><div class="label">Всего км по тракту</div></div>
+  <div class="stat-card"><div class="num">${DAYS.length}</div><div class="label">Дней поездки</div></div>
+  <div class="stat-card"><div class="num">${Math.round(totalKm / LOCATIONS.length)}</div><div class="label">Средний интервал, км</div></div>
+`;
+
+// ---------- RENDER RULER ----------
+const kms = LOCATIONS.map(l=>l.km);
+const minKm = 440, maxKm = 880;
+function pct(km){ return ((km - minKm) / (maxKm - minKm)) * 94 + 3; }
+
+document.getElementById('ruler').innerHTML = '<div class="track"></div>' + LOCATIONS.map(l => `
+  <div class="pin" style="left:${pct(l.km)}%; color:${CATS[l.cat].color}" data-target="${l.id}">
+    <div class="dot" style="background:${CATS[l.cat].color}"></div>
+    <div class="km mono">${l.approx?'≈':''}${l.km} км</div>
+    <div class="nm">${l.name.split(' и ')[0].split(':')[0].split(' — ')[0]}</div>
+  </div>
+`).join('');
+
+// ---------- LEGEND ----------
+const usedCats = [...new Set(LOCATIONS.map(l=>l.cat))];
+document.getElementById('legend').innerHTML = usedCats.map(c => `
+  <div class="item"><span class="sw" style="background:${CATS[c].color}"></span>${CATS[c].label}</div>
+`).join('');
+
+// ---------- RENDER CARDS ----------
+const cardsEl = document.getElementById('cards');
+cardsEl.innerHTML = LOCATIONS.map(l => `
+  <article class="card" id="${l.id}" style="--accent:${CATS[l.cat].color}">
+    <div class="card-head">
+      <div class="badges">
+        <span class="badge km">${l.approx?'≈':''}${l.km} км</span>
+        <span class="badge">${CATS[l.cat].label}</span>
+        ${l.detour ? '<span class="badge detour">съезд с тракта</span>' : ''}
+      </div>
+    </div>
+    <h3>${l.name}</h3>
+    <p class="short">${l.short}</p>
+    <div class="stat-row">
+      <span class="stat">Сложность: <b>${l.difficulty}</b></span>
+      <span class="stat">Время: <b>${l.duration}</b></span>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="info-${l.id}">Активности</button>
+      <button class="tab-btn" data-tab="content-${l.id}">Идеи для контента</button>
+      <button class="tab-btn" data-tab="gallery-${l.id}">Фото</button>
+    </div>
+    <div class="tab-panel active" id="info-${l.id}">
+      <ul class="activities">
+        ${l.activities.map(a=>`<li>${a}</li>`).join('')}
+      </ul>
+    </div>
+    <div class="tab-panel" id="gallery-${l.id}">
+      <div class="card-img-grid">
+        ${l.photos.map((p,i)=>`<img src="${p}" alt="${l.name} — фото ${i+1}" loading="lazy" class="${i===0?'wide':''}">`).join('')}
+      </div>
+    </div>
+    <div class="tab-panel" id="content-${l.id}">
+      <div class="content-ideas">
+        ${l.content.map(c=>`
+          <div class="idea">
+            <div class="tag">${c.t}</div>
+            <div class="txt">${c.d}</div>
+            <div class="hashtags">${l.hashtags}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="outfit"><span class="chip"></span>Образ: ${l.outfit}</div>
+    </div>
+  </article>
+`).join('');
+
+// ---------- RULER CLICK ----------
+document.querySelectorAll('.pin').forEach(pin=>{
+  pin.addEventListener('click', ()=>{
+    document.querySelectorAll('.pin').forEach(p=>p.classList.remove('active'));
+    pin.classList.add('active');
+    const target = document.getElementById(pin.dataset.target);
+    target.scrollIntoView({behavior:'smooth', block:'center'});
+    target.classList.add('pulse');
+    setTimeout(()=>target.classList.remove('pulse'), 1500);
+  });
+});
+
+// ---------- CARD TABS ----------
+document.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.tab-btn');
+  if(!btn) return;
+  const card = btn.closest('.card');
+  card.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  card.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(btn.dataset.tab).classList.add('active');
+});
+
+// ---------- EXPAND ALL / COLLAPSE ALL ----------
+document.getElementById('expandAll').addEventListener('click',()=>{
+  document.querySelectorAll('.card .tab-btn[data-tab^="content-"]').forEach(b=>{
+    const card=b.closest('.card');
+    card.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+    card.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(b.dataset.tab).classList.add('active');
+  });
+});
+document.getElementById('collapseAll').addEventListener('click',()=>{
+  document.querySelectorAll('.card .tab-btn[data-tab^="info-"]').forEach(b=>{
+    const card=b.closest('.card');
+    card.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+    card.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(b.dataset.tab).classList.add('active');
+  });
+});
+
+// ---------- RENDER TIMELINE ----------
+document.getElementById('timeline').innerHTML = DAYS.map(d => `
+  <div class="day" data-num="${d.n}" style="--accent:${d.accent}">
+    <div class="day-card">
+      <div class="day-head">
+        <h3>${d.route}</h3>
+        <span class="day-type">${d.type}</span>
+      </div>
+      <div class="day-stats">
+        ${d.stats.map(s=>`<span class="stat mono">${s}</span>`).join('')}
+      </div>
+      ${d.stops.length ? `<ul class="stops">${d.stops.map(s=>`<li>${s}</li>`).join('')}</ul>` : ''}
+      <div class="overnight">Ночёвка: ${d.overnight}</div>
+      ${d.tip ? `<div class="tip">${d.tip}</div>` : ''}
+    </div>
+  </div>
+`).join('');
+
+// ---------- VIEW SWITCH ----------
+document.querySelectorAll('nav.views button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.views button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-route').classList.remove('active');
+    document.getElementById('view-plan').classList.remove('active');
+    document.getElementById('view-' + btn.dataset.view).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+// ---------- LIGHTBOX ----------
+document.addEventListener('click', function(e){
+  const img = e.target.closest('.card-img-grid img');
+  if(!img) return;
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lbImg').src = img.src;
+  lb.classList.add('open');
+});
+document.getElementById('lbClose').addEventListener('click', ()=>{
+  document.getElementById('lightbox').classList.remove('open');
+});
+document.getElementById('lightbox').addEventListener('click', (e)=>{
+  if(e.target === e.currentTarget){
+    document.getElementById('lightbox').classList.remove('open');
+  }
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape'){
+    document.getElementById('lightbox').classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

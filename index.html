@@ -80,19 +80,23 @@
     font-size:13px; color:var(--ink-dim); background:transparent; border:none;
     padding:9px 18px; border-radius:7px; cursor:pointer; transition:all .2s ease;
   }
+  nav.views button{position:relative;}
   nav.views button.active{background:var(--turquoise); color:#0d1712; font-weight:600;}
   nav.views button:not(.active):hover{color:var(--ink); background:var(--card-hover);}
+  nav.views button::after{content:''; position:absolute; bottom:3px; left:50%; width:0; height:2px; background:var(--turquoise); border-radius:2px; transition:all .25s ease; transform:translateX(-50%);}
+  nav.views button.active::after{width:20px;}
 
   main{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 24px 90px;}
 
   /* ---------- HERO ---------- */
-  .hero{padding:50px 0 28px; border-bottom:1px dashed var(--line); margin-bottom:32px;}
+  .hero{padding:50px 0 28px; border-bottom:1px dashed var(--line); margin-bottom:32px; animation:heroIn .8s ease;}
+  @keyframes heroIn{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);}}
   .eyebrow{
     font-family:var(--font-mono); font-size:12.5px; color:var(--turquoise);
     letter-spacing:0.08em; text-transform:uppercase; margin-bottom:14px; display:block;
   }
-  .hero h1{font-size:clamp(34px,5.5vw,58px); line-height:1.02; margin-bottom:16px; max-width:860px;}
-  .hero h1 span{color:var(--terracotta);}
+  .hero h1{font-size:clamp(34px,5.5vw,58px); line-height:1.02; margin-bottom:16px; max-width:860px; background:linear-gradient(135deg,var(--ink) 40%,var(--terracotta),var(--turquoise)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;}
+  .hero h1 span{color:var(--terracotta); -webkit-text-fill-color:var(--terracotta);}
   .hero p.lede{font-size:17px; color:var(--ink-dim); max-width:680px; margin-bottom:24px;}
   .meta-row{display:flex; flex-wrap:wrap; gap:10px;}
   .meta-chip{
@@ -105,10 +109,14 @@
 
   /* ---------- OVERVIEW STATS ---------- */
   .overview-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:36px;}
+  .overview-grid .stat-card{opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease;}
+  .overview-grid .stat-card.visible{opacity:1; transform:translateY(0);}
   .stat-card{
     background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
     text-align:center;
   }
+  .stat-card{transition:transform .3s ease, border-color .3s;}
+  .stat-card:hover{transform:translateY(-3px); border-color:var(--turquoise);}
   .stat-card .num{font-family:var(--font-display); font-size:28px; color:var(--turquoise);}
   .stat-card .label{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.05em; margin-top:2px;}
 
@@ -118,6 +126,10 @@
   .ruler-label h2{font-size:14px; color:var(--ink-dim); letter-spacing:.08em;}
   .ruler-label .note{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint);}
   .ruler-scroll{overflow-x:auto; overflow-y:hidden; padding-bottom:14px; -webkit-overflow-scrolling:touch; scroll-snap-type:x mandatory;}
+  .ruler-scroll::-webkit-scrollbar{height:5px;}
+  .ruler-scroll::-webkit-scrollbar-track{background:var(--bg-soft); border-radius:4px;}
+  .ruler-scroll::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+  .ruler-scroll::-webkit-scrollbar-thumb:hover{background:var(--ink-faint);}
   .ruler{
     position:relative; height:86px; min-width:940px;
     margin:0 10px;
@@ -147,6 +159,8 @@
     opacity:0; transform:translateY(-4px); transition:all .18s ease;
   }
   .ruler .pin:hover .nm, .ruler .pin.active .nm{opacity:1; transform:translateY(0); color:var(--ink);}
+  .ruler .pin.active .dot{animation:pinPulse 1.5s infinite;}
+  @keyframes pinPulse{0%,100%{box-shadow:0 0 0 0 currentColor;} 50%{box-shadow:0 0 0 8px rgba(255,255,255,0.1);}}
   .ruler .pin.small{top:36px; width:50px;}
   .ruler .pin.small .dot{width:8px; height:8px; border-width:2px; box-shadow:0 0 0 1px var(--line);}
   .ruler .pin.small .km{font-size:9px;}
@@ -175,10 +189,21 @@
   .grid{display:grid; grid-template-columns:1fr; gap:16px;}
   .card{
     background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-    padding:26px; scroll-margin-top:120px; transition:border-color .25s ease, transform .25s ease;
+    padding:26px; scroll-margin-top:120px;
     position:relative; overflow:hidden;
+    opacity:0; transform:translateY(24px);
+    transition:opacity .5s ease, transform .5s ease, border-color .25s ease;
   }
-  .card.pulse{border-color:var(--turquoise);}
+  .card.visible{opacity:1; transform:translateY(0);}
+  .card:hover{border-color:var(--accent, var(--turquoise)); transform:translateY(-2px);}
+  .card.pulse{animation:pulseGlow 1.2s ease;}
+  @keyframes pulseGlow{
+    0%,100%{box-shadow:0 0 0 0 rgba(76,186,175,0);}
+    50%{box-shadow:0 0 0 12px rgba(76,186,175,0.15);}
+  }
+  .card.compact{opacity:1; transform:none; padding:16px 20px; --accent:var(--sand);}
+  .card.compact.visible{opacity:1; transform:none;}
+  .card.compact:hover{transform:translateY(-1px);}
   .card-img-grid{
     display:grid; grid-template-columns:1fr 1fr; gap:8px;
     margin-top:4px;
@@ -282,10 +307,11 @@
   .outfit .chip{width:14px; height:14px; border-radius:4px; background:var(--accent, var(--turquoise)); flex-shrink:0;}
 
   /* ---------- PLAN VIEW ---------- */
-  #view-plan{display:none;}
-  #view-plan.active{display:block;}
-  #view-route.active{display:block;}
-  #view-route{display:none;}
+#view-plan{display:none; opacity:0;}
+#view-plan.active{display:block; animation:viewFade .4s ease forwards;}
+#view-route.active{display:block; animation:viewFade .4s ease forwards;}
+#view-route{display:none; opacity:0;}
+@keyframes viewFade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
 
   .plan-intro{max-width:780px; margin-bottom:28px; color:var(--ink-dim); font-size:15.5px;}
   .plan-intro b{color:var(--ink);}
@@ -298,7 +324,8 @@
   .callout li{margin-bottom:5px;}
 
   .timeline{position:relative; padding-left:30px; border-left:2px solid var(--line);}
-  .day{position:relative; padding-bottom:32px;}
+  .day{position:relative; padding-bottom:32px; opacity:0; transform:translateX(-10px); transition:opacity .5s ease, transform .5s ease;}
+  .day.visible{opacity:1; transform:translateX(0);}
   .day:last-child{padding-bottom:0;}
   .day::before{
     content:attr(data-num);
@@ -308,7 +335,8 @@
     display:flex; align-items:center; justify-content:center;
     font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--ink);
   }
-  .day-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px;}
+  .day-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px; transition:border-color .3s ease, transform .3s ease;}
+  .day-card:hover{border-color:var(--accent, var(--turquoise)); transform:translateX(3px);}
   .day-head{display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; align-items:baseline; margin-bottom:12px;}
   .day-head h3{font-size:18px; color:var(--ink);}
   .day-type{
@@ -487,7 +515,7 @@ const CATS = {
 
 const LOCATIONS = [
   {
-    id:'manzherok', km:470, approx:true, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Chuysky_Trakt_in_Ongudaysky_District.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chuysky_trakt.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/M52-Barnaul.JPG'],
+    id:'manzherok', km:470, approx:true, photos:['https://upload.wikimedia.org/wikipedia/commons/4/44/Manzherok.jpg','https://upload.wikimedia.org/wikipedia/commons/1/19/%D0%9E%D0%B7%D0%B5%D1%80%D0%BE_%D0%BC%D0%B0%D0%BD%D0%B6%D0%B5%D1%80%D0%BE%D0%BA.jpg','https://upload.wikimedia.org/wikipedia/commons/6/62/Chuysky_Trakt_in_Ongudaysky_District.jpg'],
     name:'Манжерок и гора Синюха', cat:'water',
     short:'Мягкая разминка перед горами: озеро с легендами, кресельный подъёмник и первая панорама на Катунь.',
     activities:[
@@ -515,7 +543,7 @@ const LOCATIONS = [
     short:'Большое алтайское село в горной долине. Красивый вид на хребты с тракта.'
   },
   {
-    id:'seminsky', km:583, approx:false, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_south_direction.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chuytr.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_north_direction.jpg'],
+    id:'seminsky', km:583, approx:false, photos:['https://upload.wikimedia.org/wikipedia/commons/5/56/Seminsky_Pass_04.jpg','https://upload.wikimedia.org/wikipedia/commons/d/d6/Seminsky_Pass_05.jpg','https://upload.wikimedia.org/wikipedia/commons/6/62/Chuysky_Trakt_in_Ongudaysky_District.jpg'],
     name:'Семинский перевал', cat:'forest',
     short:'Первый серьёзный перевал тракта (≈1717 м), граница Северного и Центрального Алтая — кедровый лес и памятник дружбе народов.',
     activities:[
@@ -539,7 +567,7 @@ const LOCATIONS = [
     short:'Райцентр в окружении гор. Хорошая точка для ночлега — и отличное звёздное небо.'
   },
   {
-    id:'chiketaman', km:659, approx:false, photos:['https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_north_direction.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Panorama_from_the_Chike-Taman_pass_in_the_south_direction.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/Chuysky_Trakt_in_Ongudaysky_District.jpg'],
+    id:'chiketaman', km:659, approx:false, photos:['https://upload.wikimedia.org/wikipedia/commons/4/42/Chike-Taman_Pass.jpg','https://upload.wikimedia.org/wikipedia/commons/7/70/Panorama_from_the_Chike-Taman_pass_in_the_north_direction.jpg','https://upload.wikimedia.org/wikipedia/commons/7/76/Panorama_from_the_Chike-Taman_pass_in_the_south_direction.jpg'],
     name:'Перевал Чике-Таман', cat:'pass',
     short:'Самый фотогеничный серпантин тракта: смотровая площадка прямо над петлями дороги, рядом — участок старого тракта почти вековой давности.',
     activities:[
@@ -624,12 +652,18 @@ const DAYS = [
 
 // ---------- OVERVIEW STATS ----------
 const totalKm = LOCATIONS.reduce((s,l)=>s+l.km,0);
-document.getElementById('overviewGrid').innerHTML = `
+const grid = document.getElementById('overviewGrid');
+grid.innerHTML = `
   <div class="stat-card"><div class="num">${LOCATIONS.length}</div><div class="label">Локаций</div></div>
   <div class="stat-card"><div class="num">${totalKm}</div><div class="label">Всего км по тракту</div></div>
   <div class="stat-card"><div class="num">${DAYS.length}</div><div class="label">Дней поездки</div></div>
   <div class="stat-card"><div class="num">${Math.round(totalKm / LOCATIONS.length)}</div><div class="label">Средний интервал, км</div></div>
 `;
+setTimeout(()=>{
+  grid.querySelectorAll('.stat-card').forEach((el,i)=>{
+    setTimeout(()=>el.classList.add('visible'), i*100);
+  });
+}, 200);
 
 // ---------- RENDER RULER ----------
 const kms = LOCATIONS.map(l=>l.km);
@@ -782,6 +816,28 @@ document.querySelectorAll('nav.views button').forEach(btn=>{
     document.getElementById('view-' + btn.dataset.view).classList.add('active');
     window.scrollTo({top:0, behavior:'smooth'});
   });
+});
+
+// ---------- SCROLL REVEAL ----------
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+}, {threshold:0.15});
+document.querySelectorAll('.card:not(.compact), .day').forEach(el=>observer.observe(el));
+
+// ---------- ACTIVE PIN ON SCROLL ----------
+const cards = document.querySelectorAll('.card:not(.compact)');
+window.addEventListener('scroll', ()=>{
+  let closest = null, minDist = Infinity;
+  const viewMid = window.scrollY + window.innerHeight/2;
+  cards.forEach(c=>{
+    const dist = Math.abs(c.offsetTop + c.offsetHeight/2 - viewMid);
+    if(dist < minDist){minDist=dist; closest=c;}
+  });
+  document.querySelectorAll('.pin').forEach(p=>p.classList.remove('active'));
+  if(closest){
+    const pin = document.querySelector(`.pin[data-target="${closest.id}"]`);
+    if(pin) pin.classList.add('active');
+  }
 });
 
 // ---------- LIGHTBOX ----------
